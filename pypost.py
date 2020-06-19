@@ -1,9 +1,12 @@
 import requests as r
+import os
 from tkinter import Tk, Button, Label, StringVar, IntVar, Entry, Text, Frame
 from tkinter import messagebox
 from tkinter import simpledialog as simpledialog
+from tkinter import filedialog
 import tkinter.font as fnt
 import json
+
 
 class SendRequest:
     def __init__(self):
@@ -92,7 +95,7 @@ class UserInterface:
         self.version_label.place(x=930, y=5)
         
 
-        self.despy = 25
+        self.despy = 35
 
         self.c_t = StringVar()
         self.url_var = StringVar()
@@ -108,6 +111,10 @@ class UserInterface:
         messagebox.showerror("Error", msg)
 
     def create_widgets(self):
+
+        self.label_url = Label(self.ventana, text="Url:",bg=self.BG_COLOR, font=self.font_h6  )
+        self.label_url.place(relx = 0.1, y = 50)
+
         self.url_bar = Text(self.ventana, width = '70', height = 1.2)
         self.url_bar.place(relx = 0.1, y = 40+self.despy)
         self.url_bar.config(font=self.font_entry)
@@ -241,7 +248,13 @@ class UserInterface:
 
 
     def save_to_file(self):
-        f = open("mi_file.txt", "w")
+        my_filetypes = [('all files', '.*'), ('text files', '.txt')]
+
+        answer = filedialog.asksaveasfilename(parent=self.ventana,
+                                            initialdir = os.getcwd(),
+                                            title = "Please select a name for saving: ",
+                                            filetype = my_filetypes)
+        f = open(answer, "w")
         f.write(self.response_area.get("1.0", 'end-1c'))
         f.close()  
 
