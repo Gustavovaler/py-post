@@ -136,7 +136,7 @@ class UserInterface:
         self.response_area = Text(self.ventana, width= '85', height = 10, font=self.font_h6, bd=2)
         self.response_area.place(relx = 0.1, y = 145+self.despy)
 
-        self.save_button = Button(self.ventana, text= "EXPORT TO FILE", bg=self.BACK_COLOR, fg= self.FG_COLOR)
+        self.save_button = Button(self.ventana, text= "EXPORT TO FILE", bg=self.BACK_COLOR, fg= self.FG_COLOR, command = self.save_to_file)
         self.save_button.place(relx = 0.68, y= 335+self.despy)
 
         self.clear_button = Button(self.ventana, text= " CLEAR ", bg=self.BACK_COLOR, fg= self.FG_COLOR, command = self.clear)
@@ -237,7 +237,13 @@ class UserInterface:
         try:
             self.length.set(self.response.headers['content-length'])
         except:
-            self.length.set('N/A')       
+            self.length.set('N/A')     
+
+
+    def save_to_file(self):
+        f = open("mi_file.txt", "w")
+        f.write(self.response_area.get("1.0", 'end-1c'))
+        f.close()  
 
 
 if __name__ == '__main__':
