@@ -64,7 +64,8 @@ class UserInterface:
         #colours**********
         self.FG_COLOR = "#ccedd2"
         self.BACK_COLOR = "#655c56"
-        self.BG_COLOR = '#effcef'
+        self.BG_COLOR = '#deebde'
+        self.ORANGE = '#FFCC66'
 
         # *** sizing *****
 
@@ -103,6 +104,19 @@ class UserInterface:
         self.length = StringVar()
         
         
+        
+       
+
+
+        #--- set headers area -----------------
+
+        self.frame2 = Frame(self.ventana, width = 700, height=220)
+        self.frame2.place(relx = 0.05, y = 140+self.despy)
+
+        self.frame3 = Frame(self.frame2, width =684 , height = 34, bg= self.BACK_COLOR)
+        self.frame3.place(relx = 0.01 , y = 181)
+
+
         self.create_widgets()
         self.ventana.mainloop()
 
@@ -113,48 +127,45 @@ class UserInterface:
     def create_widgets(self):
 
         self.label_url = Label(self.ventana, text="Url:",bg=self.BG_COLOR, font=self.font_h6  )
-        self.label_url.place(relx = 0.1, y = 50)
+        self.label_url.place(relx = 0.05, y = 50)
 
         self.url_bar = Text(self.ventana, width = '70', height = 1.2)
-        self.url_bar.place(relx = 0.1, y = 40+self.despy)
+        self.url_bar.place(relx = 0.05, y = 40+self.despy)
         self.url_bar.config(font=self.font_entry)
         
         self.get_button = Button(self.ventana, text =" GET ", command = self.send_request_get)
-        self.get_button.place(relx = 0.1, y = 75+self.despy)
-        self.get_button.config(fg=self.FG_COLOR, bg= self.BACK_COLOR)
+        self.get_button.place(relx = 0.05, y = 75+self.despy)
+        self.get_button.config(fg=self.ORANGE, bg= self.BACK_COLOR)
         
         self.post_button = Button(self.ventana, text ="POST", command = self.send_request_post)
-        self.post_button.place(relx = 0.15, y = 75+self.despy)
-        self.post_button.config(fg=self.FG_COLOR, bg= self.BACK_COLOR)
+        self.post_button.place(relx = 0.10, y = 75+self.despy)
+        self.post_button.config(fg=self.ORANGE, bg= self.BACK_COLOR)
         
         self.update_button = Button(self.ventana, text = " UPDATE ", command = self.send_request_update)
-        self.update_button.place(relx = 0.2, y = 75+self.despy)
-        self.update_button.config(fg=self.FG_COLOR, bg= self.BACK_COLOR)
+        self.update_button.place(relx = 0.15, y = 75+self.despy)
+        self.update_button.config(fg=self.ORANGE, bg= self.BACK_COLOR)
         
         self.delete_button = Button(self.ventana, text =" DELETE ",  command = self.send_request_delete)
-        self.delete_button.place(relx = 0.27, y = 75+self.despy)
-        self.delete_button.config(fg=self.FG_COLOR, bg= self.BACK_COLOR)
+        self.delete_button.place(relx = 0.22, y = 75+self.despy)
+        self.delete_button.config(fg=self.ORANGE, bg= self.BACK_COLOR)
 
         self.status_widgets()
         self.content_type_widgets()
 
         #---- RESPONSE AREA WIDGETS-------------
 
-        self.response_area = Text(self.ventana, width= '85', height = 10, font=self.font_h6, bd=2)
-        self.response_area.place(relx = 0.1, y = 145+self.despy)
+        self.response_area = Text(self.frame2, width= '85', height = 10, font=self.font_h6, bd=2)
+        self.response_area.place(relx = 0.01, y = 4)
 
-        self.save_button = Button(self.ventana, text= "EXPORT TO FILE", bg=self.BACK_COLOR, fg= self.FG_COLOR, command = self.save_to_file)
-        self.save_button.place(relx = 0.68, y= 335+self.despy)
+        self.save_button = Button(self.ventana, text= "EXPORT TO FILE", bg=self.BACK_COLOR, fg= self.ORANGE, command = self.save_to_file)
+        self.save_button.place(relx = 0.63, y= 365+self.despy)
 
-        self.clear_button = Button(self.ventana, text= " CLEAR ", bg=self.BACK_COLOR, fg= self.FG_COLOR, command = self.clear)
-        self.clear_button.place(relx = 0.61 , y= 335+self.despy)
+        self.clear_button = Button(self.ventana, text= " CLEAR ", bg=self.BACK_COLOR, fg= self.ORANGE, command = self.clear)
+        self.clear_button.place(relx = 0.56 , y= 365+self.despy)
 
-        self.length_label = Label(self.ventana, text = "Content Length:",bg=self.BG_COLOR, font=self.font_h6 )
-        self.length_label.place(relx = 0.12 , y= 335+self.despy)
+        
 
-        self.length_entry = Entry(self.ventana,textvariable = self.length,width = 5, font=self.font_h6)
-        self.length_entry.place(relx = 0.24, y = 335+self.despy)
-
+  
 
     def clear(self):
         self.response_area.delete("1.0", "end")
@@ -164,19 +175,25 @@ class UserInterface:
         
     def status_widgets(self):
         self.status_label = Label(self.ventana, text= "Status : ")
-        self.status_label.place(relx=0.12, y = 110+self.despy)
+        self.status_label.place(relx=0.07, y = 110+self.despy)
         self.status_label.config(bg=self.BG_COLOR, font=self.font_h6)
 
         self.status_entry = Entry(self.ventana,textvariable = self.status,width = 5, font=self.font_h6)
-        self.status_entry.place(relx = 0.18, y = 110+self.despy)
+        self.status_entry.place(relx = 0.13, y = 110+self.despy)
+
+        self.length_label = Label(self.ventana, text = "Content Length:",bg=self.BG_COLOR, font=self.font_h6 )
+        self.length_label.place(relx = 0.55 , y= 110+self.despy)
+
+        self.length_entry = Entry(self.ventana,textvariable = self.length,width = 5, font=self.font_h6)
+        self.length_entry.place(relx = 0.67, y = 110+self.despy)
 
     def content_type_widgets(self):
         self.content_label = Label(self.ventana, text='Content-Type:')
-        self.content_label.place(relx=0.25, y = 110+self.despy)
+        self.content_label.place(relx=0.20, y = 110+self.despy)
         self.content_label.config(bg=self.BG_COLOR, font=self.font_h6)
 
         self.content_entry = Entry(self.ventana,textvariable = self.c_t ,width = 28, font=self.font_h6)
-        self.content_entry.place(relx = 0.35, y = 110+self.despy)
+        self.content_entry.place(relx = 0.30, y = 110+self.despy)
 
 #----------------FUNCTIONS -------------------
     def send_request_get(self):
@@ -248,15 +265,22 @@ class UserInterface:
 
 
     def save_to_file(self):
-        my_filetypes = [('all files', '.*'), ('text files', '.txt')]
+
+        if self.response_area.get("1.0", 'end-1c') == '':
+            self.error_dialog("No hay contenido para guradar.")
+            return
+
+        my_filetypes = [('all files', '.*'), ('text files', '.txt'), ('web','.html'),('directories', '/*/')]
 
         answer = filedialog.asksaveasfilename(parent=self.ventana,
                                             initialdir = os.getcwd(),
-                                            title = "Please select a name for saving: ",
+                                            title = "Seleccione el nombre de archivo y su ubicación: ",
                                             filetype = my_filetypes)
-        f = open(answer, "w")
-        f.write(self.response_area.get("1.0", 'end-1c'))
-        f.close()  
+        if answer:
+
+            f = open(answer, "w")
+            f.write(self.response_area.get("1.0", 'end-1c'))
+            f.close()  
 
 
 if __name__ == '__main__':
