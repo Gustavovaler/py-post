@@ -1,5 +1,6 @@
 import requests as r
 from tkinter import Tk, Button, Label, StringVar, IntVar, Entry, Text, Frame
+from tkinter import messagebox
 from tkinter import simpledialog as simpledialog
 import tkinter.font as fnt
 import json
@@ -12,32 +13,36 @@ class SendRequest:
     def get(url, pretty = None):
 
         if url == '':
-            url="http://google.com.ar"
+            UserInterface.error_dialog("Debe ingresar una url.")
         try:
             response = r.get(url)
             return response
         except:            
             print("error de conexion")
             return None
-            
-        
+                   
 
     @staticmethod
-
     def post(url,data=None):
         if url == '':
+            UserInterface.error_dialog("Debe ingresar una url.")
+        try:
+            response = r.post(url, data)
+            return response
+        except:
             return None
-        response = r.post(url, data)
-
-        return response
+        
 
     @staticmethod
     def update(url,data):
         if url == '':
-            return "Url incorrecta"
+            UserInterface.error_dialog("Debe ingresar una url.")
         else:
-            response = r.put(url, data)
-            return response
+            try:
+                response = r.put(url, data)
+                return response
+            except:
+                return None
 
 
     @staticmethod
@@ -46,9 +51,8 @@ class SendRequest:
             response = r.delete(url)
             return response
         else:
-            return "Url mal formateada o ausente."
-
-
+            UserInterface.error_dialog("Debe ingresar una url.")
+            return None
 
 
 class UserInterface:       
@@ -98,6 +102,10 @@ class UserInterface:
         
         self.create_widgets()
         self.ventana.mainloop()
+
+    @staticmethod
+    def error_dialog(msg):
+        messagebox.showerror("Error", msg)
 
     def create_widgets(self):
         self.url_bar = Text(self.ventana, width = '70', height = 1.2)
