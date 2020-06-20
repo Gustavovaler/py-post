@@ -1,6 +1,6 @@
 import json
 import requests as r
-
+from tkinter import messagebox
 
 def parse_log():
     f = open("log.json", "r")
@@ -21,7 +21,7 @@ class SendRequest:
     def get(url, pretty = None):
 
         if url == '':
-            UserInterface.error_dialog("Debe ingresar una url.")
+            return "err1"            
         try:
             response = r.get(url)
             return response

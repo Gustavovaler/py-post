@@ -69,27 +69,12 @@ class UserInterface:
         self.frame_memory = LabelFrame(self.ventana, width = 250 , height = 220, text = "Recent requests" , labelanchor = 'n', relief = 'ridge')
         self.frame_memory.place(x=780, y = 130+self.despy)
 
-        self.objects = parse_log()
-        
-        for obj in self.objects:
-            b_g = None
-            if self.objects.index(obj) > 7:
-                break
-            if obj['method'] == 'GET':
-                b_g = "#B2E6C7"
-            elif obj['method'] == 'POST':
-                b_g = "#EAE658"
-            elif obj['method'] == 'UPDATE':
-                b_g = "#F5A66F"
-            elif obj['method'] == 'DELETE':
-                b_g = "#F53333"
-
-            self.recent_button = Button(self.frame_memory, text = "{} - {}".format(obj['method'], obj['url']), bg=b_g,
-                command = lambda obj=obj: self.set_var_url(obj['url']))       
-            self.recent_button.pack()
 
 
 
+
+        self.memory_frame()
+        self.memory_panel()
         self.create_widgets()
         self.ventana.mainloop()
 
@@ -104,6 +89,30 @@ class UserInterface:
 
 
     #--- widget  methods -----------------------------
+    def memory_frame(self):
+        self.frame_memory = LabelFrame(self.ventana, width = 250 , height = 220, text = "Recent requests" , labelanchor = 'n', relief = 'ridge')
+        self.frame_memory.place(x=780, y = 130+self.despy)
+
+    def memory_panel(self): 
+           
+        self.memory_frame()
+        self.objects = parse_log()        
+        for obj in self.objects:
+            b_g = None
+            if self.objects.index(obj) > 7:
+                break
+            if obj['method'] == 'GET':
+                b_g = "#B2E6C7"
+            elif obj['method'] == 'POST':
+                b_g = "#EAE658"
+            elif obj['method'] == 'UPDATE':
+                b_g = "#F5A66F"
+            elif obj['method'] == 'DELETE':
+                b_g = "#F53333"
+
+            self.recent_button = Button(self.frame_memory,width=35, text = "{} - {}".format(obj['method'][:3], obj['url'][:35]), bg=b_g,
+                command = lambda obj=obj: self.set_var_url(obj['url']))       
+            self.recent_button.pack()   
 
     def create_widgets(self):
 
@@ -156,6 +165,7 @@ class UserInterface:
         self.status.set('')
         self.c_t.set('')
         self.length.set('')
+
         
     def status_widgets(self):
         self.status_label = Label(self.ventana, text= "Status : ")
@@ -201,9 +211,15 @@ class UserInterface:
             self.response = SendRequest.delete(self.url)
 
         if self.response:
-             self.deploy_data(self.response)
+            if self.response == "err1":
+                self.error_dialog("Debe ingresar una url.")
+            else:
+                self.deploy_data(self.response)
         else:
             self.response_area.insert("1.0", "No se pudo establecer conexión con el servidor")
+
+        self.frame_memory.destroy()
+        self.memory_panel()
 
 
     def deploy_data(self, response):
@@ -248,10 +264,10 @@ if __name__ == '__main__':
     if not os.path.isfile(cdir+"/log.json"):
         f=open("log.json", "w")
         f.write('{"urls":[]}')
-        f.close()
-    parse_log()   
+        f.close()   
 
     app = UserInterface()
+
 
 
 
