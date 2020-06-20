@@ -5,6 +5,7 @@ from tkinter import messagebox
 from tkinter import simpledialog as simpledialog
 from tkinter import filedialog
 import tkinter.font as fnt
+from tkinter.ttk import LabelFrame
 import json
 
 
@@ -69,7 +70,7 @@ class UserInterface:
 
         # *** sizing *****
 
-        self.width = 1000
+        self.width = 1050
         self.height = 600
 
         # main window
@@ -92,19 +93,16 @@ class UserInterface:
         self.nav_bar.place(x=0, y=0)
         self.title = Label(self.nav_bar, text="PY-POST", bg=self.BACK_COLOR, fg=self.FG_COLOR)
         self.title.place(x=50, y =5)
-        self.version_label = Label(self.nav_bar, text= "v - 1.0 ", bg=self.BACK_COLOR, fg=self.FG_COLOR)
+        self.version_label = Label(self.nav_bar, text= "v - 1.1 ", bg=self.BACK_COLOR, fg=self.FG_COLOR)
         self.version_label.place(x=930, y=5)
         
 
+        #---- special vars----------------------
         self.despy = 35
-
         self.c_t = StringVar()
         self.url_var = StringVar()
         self.status = StringVar()
-        self.length = StringVar()
-        
-        
-        
+        self.length = StringVar()       
        
 
 
@@ -116,13 +114,52 @@ class UserInterface:
         self.frame3 = Frame(self.frame2, width =684 , height = 34, bg= self.BACK_COLOR)
         self.frame3.place(relx = 0.01 , y = 181)
 
+        #*******************
+        #******************
+
+        self.objects = [
+            {'method':'GET', 'url':'https://google.com.ar'},
+            {'method':'POST', 'url':'https://google.com.ar/users/1'},
+            {'method':'POST', 'url':'https://google.com.ar/users/7'},
+            {'method':'POST', 'url':'https://google.com.ar/users/3'},
+            {'method':'POST', 'url':'https://google.com.ar/users/2'},
+            {'method':'POST', 'url':'https://google.com.ar/users/4'},
+            {'method':'POST', 'url':'https://google.com.ar/users/5'},
+            {'method':'POST', 'url':'https://google.com.ar/users/6'},
+            {'method':'POST', 'url':'https://google.com.ar/users/22'},
+
+        ]
+        
+
+    #-- memory panel--------------------
+
+        self.frame_memory = LabelFrame(self.ventana, width = 250 , height = 220, text = "Recent requests" , labelanchor = 'n', relief = 'ridge')
+        self.frame_memory.place(x=780, y = 130+self.despy)
+
+
+        for obj in self.objects:
+            if self.objects.index(obj) > 7:
+                break
+            self.recent_button = Button(self.frame_memory, text = "{} - {}".format(obj['method'], obj['url']),
+                command = lambda obj=obj: self.set_var_url(obj['url']))       
+            self.recent_button.pack()
+
+
 
         self.create_widgets()
         self.ventana.mainloop()
 
+
+
+    # -------  errors methods -----------
+
+
     @staticmethod
     def error_dialog(msg):
         messagebox.showerror("Error", msg)
+
+
+    #--- widget  methods -----------------------------
 
     def create_widgets(self):
 
@@ -154,18 +191,21 @@ class UserInterface:
 
         #---- RESPONSE AREA WIDGETS-------------
 
-        self.response_area = Text(self.frame2, width= '85', height = 10, font=self.font_h6, bd=2)
+        self.response_area = Text(self.frame2, width = '85', height = 10, font = self.font_h6, bd=2)
         self.response_area.place(relx = 0.01, y = 4)
 
-        self.save_button = Button(self.ventana, text= "EXPORT TO FILE", bg=self.BACK_COLOR, fg= self.ORANGE, command = self.save_to_file)
-        self.save_button.place(relx = 0.63, y= 365+self.despy)
+        self.save_button = Button(self.ventana, text = "EXPORT TO FILE", bg = self.BACK_COLOR, fg= self.ORANGE, command = self.save_to_file)
+        self.save_button.place(relx = 0.63, y = 365+self.despy)
 
-        self.clear_button = Button(self.ventana, text= " CLEAR ", bg=self.BACK_COLOR, fg= self.ORANGE, command = self.clear)
-        self.clear_button.place(relx = 0.56 , y= 365+self.despy)
+        self.clear_button = Button(self.ventana, text = " CLEAR ", bg =self.BACK_COLOR, fg = self.ORANGE, command = self.clear)
+        self.clear_button.place(relx = 0.56 , y = 365+self.despy)
 
         
 
   
+    def set_var_url(self,url):
+        self.url_bar.delete("1.0","end")
+        self.url_bar.insert("1.0", url)
 
     def clear(self):
         self.response_area.delete("1.0", "end")
@@ -194,6 +234,7 @@ class UserInterface:
 
         self.content_entry = Entry(self.ventana,textvariable = self.c_t ,width = 28, font=self.font_h6)
         self.content_entry.place(relx = 0.30, y = 110+self.despy)
+
 
 #----------------FUNCTIONS -------------------
     def send_request_get(self):
