@@ -94,7 +94,7 @@ class UserInterface:
         self.frame_memory.place(x=780, y = 130+self.despy)
 
     def memory_panel(self): 
-           
+
         self.memory_frame()
         self.objects = parse_log()        
         for obj in self.objects:
@@ -112,7 +112,12 @@ class UserInterface:
 
             self.recent_button = Button(self.frame_memory,width=35, text = "{} - {}".format(obj['method'][:3], obj['url'][:35]), bg=b_g,
                 command = lambda obj=obj: self.set_var_url(obj['url']))       
-            self.recent_button.pack()   
+            self.recent_button.pack()
+
+    def save_reg_to_file(self,dat):
+        self.objects.append(dat)
+        
+
 
     def create_widgets(self):
 
@@ -123,19 +128,19 @@ class UserInterface:
         self.url_bar.place(relx = 0.05, y = 40+self.despy)
         self.url_bar.config(font=self.font_entry)
         
-        self.get_button = Button(self.ventana, text =" GET ", command = lambda : self.send_request('GET'))
+        self.get_button = Button(self.ventana, text =" GET ", command = lambda : self.send_request("GET"))
         self.get_button.place(relx = 0.05, y = 75+self.despy)
         self.get_button.config(fg=self.ORANGE, bg= self.BACK_COLOR)
         
-        self.post_button = Button(self.ventana, text ="POST", command = lambda : self.send_request('POST'))
+        self.post_button = Button(self.ventana, text ="POST", command = lambda : self.send_request("POST"))
         self.post_button.place(relx = 0.10, y = 75+self.despy)
         self.post_button.config(fg=self.ORANGE, bg= self.BACK_COLOR)
         
-        self.update_button = Button(self.ventana, text = " UPDATE ", command = lambda : self.send_request('UPDATE'))
+        self.update_button = Button(self.ventana, text = " UPDATE ", command = lambda : self.send_request("UPDATE"))
         self.update_button.place(relx = 0.15, y = 75+self.despy)
         self.update_button.config(fg=self.ORANGE, bg= self.BACK_COLOR)
         
-        self.delete_button = Button(self.ventana, text =" DELETE ",  command = lambda : self.send_request('DELETE'))
+        self.delete_button = Button(self.ventana, text =" DELETE ",  command = lambda : self.send_request("DELETE"))
         self.delete_button.place(relx = 0.22, y = 75+self.despy)
         self.delete_button.config(fg=self.ORANGE, bg= self.BACK_COLOR)
 
@@ -211,6 +216,9 @@ class UserInterface:
             self.response = SendRequest.delete(self.url)
 
         if self.response:
+            new_reg_memory = {"method":method, "url":self.url}
+            self.save_reg_to_file(new_reg_memory)
+
             if self.response == "err1":
                 self.error_dialog("Debe ingresar una url.")
             else:
