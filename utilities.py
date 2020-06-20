@@ -19,7 +19,6 @@ class SendRequest:
 
     @staticmethod
     def get(url, pretty = None):
-
         if url == '':
             return "err1"            
         try:
@@ -33,7 +32,7 @@ class SendRequest:
     @staticmethod
     def post(url,data=None):
         if url == '':
-            UserInterface.error_dialog("Debe ingresar una url.")
+            return "err1"
         try:
             response = r.post(url, data)
             return response
@@ -44,7 +43,7 @@ class SendRequest:
     @staticmethod
     def update(url,data):
         if url == '':
-            UserInterface.error_dialog("Debe ingresar una url.")
+            return "err1"
         else:
             try:
                 response = r.put(url, data)
@@ -55,9 +54,13 @@ class SendRequest:
 
     @staticmethod
     def delete(url):
-        if url != '':
-            response = r.delete(url)
+        if url == '':
+            return "err1"
             return response
         else:
-            UserInterface.error_dialog("Debe ingresar una url.")
-            return None
+            try:
+                response = r.delete(url)
+                return response
+            except:
+                return None
+
