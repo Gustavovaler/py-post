@@ -8,6 +8,14 @@ import tkinter.font as fnt
 from tkinter.ttk import LabelFrame
 import json
 
+def parse_log():
+    f = open("log.json", "r")
+    log = json.loads(f.read())
+    registros =[]
+    for reg in log['urls']:
+        registros.append(reg)
+    f.close()
+    return registros
 
 class SendRequest:
     def __init__(self):
@@ -112,35 +120,29 @@ class UserInterface:
         self.frame2.place(relx = 0.05, y = 140+self.despy)
 
         self.frame3 = Frame(self.frame2, width =684 , height = 34, bg= self.BACK_COLOR)
-        self.frame3.place(relx = 0.01 , y = 181)
-
-        #*******************
-        #******************
-
-        self.objects = [
-            {'method':'GET', 'url':'https://google.com.ar'},
-            {'method':'POST', 'url':'https://google.com.ar/users/1'},
-            {'method':'POST', 'url':'https://google.com.ar/users/7'},
-            {'method':'POST', 'url':'https://google.com.ar/users/3'},
-            {'method':'POST', 'url':'https://google.com.ar/users/2'},
-            {'method':'POST', 'url':'https://google.com.ar/users/4'},
-            {'method':'POST', 'url':'https://google.com.ar/users/5'},
-            {'method':'POST', 'url':'https://google.com.ar/users/6'},
-            {'method':'POST', 'url':'https://google.com.ar/users/22'},
-
-        ]
-        
+        self.frame3.place(relx = 0.01 , y = 181)        
 
     #-- memory panel--------------------
 
         self.frame_memory = LabelFrame(self.ventana, width = 250 , height = 220, text = "Recent requests" , labelanchor = 'n', relief = 'ridge')
         self.frame_memory.place(x=780, y = 130+self.despy)
 
-
+        self.objects = parse_log()
+        
         for obj in self.objects:
+            b_g = None
             if self.objects.index(obj) > 7:
                 break
-            self.recent_button = Button(self.frame_memory, text = "{} - {}".format(obj['method'], obj['url']),
+            if obj['method'] == 'GET':
+                b_g = "#B2E6C7"
+            elif obj['method'] == 'POST':
+                b_g = "#EAE658"
+            elif obj['method'] == 'UPDATE':
+                b_g = "#F5A66F"
+            elif obj['method'] == 'DELETE':
+                b_g = "#F53333"
+
+            self.recent_button = Button(self.frame_memory, text = "{} - {}".format(obj['method'], obj['url']), bg=b_g,
                 command = lambda obj=obj: self.set_var_url(obj['url']))       
             self.recent_button.pack()
 
@@ -306,7 +308,7 @@ class UserInterface:
 
 
     def save_to_file(self):
-
+        
         if self.response_area.get("1.0", 'end-1c') == '':
             self.error_dialog("No hay contenido para guradar.")
             return
@@ -324,7 +326,17 @@ class UserInterface:
             f.close()  
 
 
+
+
 if __name__ == '__main__':
+
+    cdir = os.getcwd()
+    if not os.path.isfile(cdir+"/log.json"):
+        f=open("log.json", "w")
+        f.write('{"urls":[]}')
+        f.close()
+    parse_log()   
+
     app = UserInterface()
 
 

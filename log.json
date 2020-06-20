@@ -1,0 +1,5 @@
+{"urls":[
+{"method":"GET", "url":"https://google.com.ar"},
+{"method":"POST", "url":"https://google.com.ar/users"}
+]
+}
