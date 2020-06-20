@@ -1,70 +1,12 @@
-import requests as r
 import os
+import json
 from tkinter import Tk, Button, Label, StringVar, IntVar, Entry, Text, Frame
 from tkinter import messagebox
 from tkinter import simpledialog as simpledialog
 from tkinter import filedialog
 import tkinter.font as fnt
 from tkinter.ttk import LabelFrame
-import json
-
-def parse_log():
-    f = open("log.json", "r")
-    log = json.loads(f.read())
-    registros =[]
-    for reg in log['urls']:
-        registros.append(reg)
-    f.close()
-    return registros
-
-class SendRequest:
-    def __init__(self):
-        pass
-
-    @staticmethod
-    def get(url, pretty = None):
-
-        if url == '':
-            UserInterface.error_dialog("Debe ingresar una url.")
-        try:
-            response = r.get(url)
-            return response
-        except:            
-            print("error de conexion")
-            return None
-                   
-
-    @staticmethod
-    def post(url,data=None):
-        if url == '':
-            UserInterface.error_dialog("Debe ingresar una url.")
-        try:
-            response = r.post(url, data)
-            return response
-        except:
-            return None
-        
-
-    @staticmethod
-    def update(url,data):
-        if url == '':
-            UserInterface.error_dialog("Debe ingresar una url.")
-        else:
-            try:
-                response = r.put(url, data)
-                return response
-            except:
-                return None
-
-
-    @staticmethod
-    def delete(url):
-        if url != '':
-            response = r.delete(url)
-            return response
-        else:
-            UserInterface.error_dialog("Debe ingresar una url.")
-            return None
+from utilities import parse_log, SendRequest
 
 
 class UserInterface:       
@@ -172,19 +114,19 @@ class UserInterface:
         self.url_bar.place(relx = 0.05, y = 40+self.despy)
         self.url_bar.config(font=self.font_entry)
         
-        self.get_button = Button(self.ventana, text =" GET ", command = self.send_request_get)
+        self.get_button = Button(self.ventana, text =" GET ", command = lambda : self.send_request('GET'))
         self.get_button.place(relx = 0.05, y = 75+self.despy)
         self.get_button.config(fg=self.ORANGE, bg= self.BACK_COLOR)
         
-        self.post_button = Button(self.ventana, text ="POST", command = self.send_request_post)
+        self.post_button = Button(self.ventana, text ="POST", command = lambda : self.send_request('POST'))
         self.post_button.place(relx = 0.10, y = 75+self.despy)
         self.post_button.config(fg=self.ORANGE, bg= self.BACK_COLOR)
         
-        self.update_button = Button(self.ventana, text = " UPDATE ", command = self.send_request_update)
+        self.update_button = Button(self.ventana, text = " UPDATE ", command = lambda : self.send_request('UPDATE'))
         self.update_button.place(relx = 0.15, y = 75+self.despy)
         self.update_button.config(fg=self.ORANGE, bg= self.BACK_COLOR)
         
-        self.delete_button = Button(self.ventana, text =" DELETE ",  command = self.send_request_delete)
+        self.delete_button = Button(self.ventana, text =" DELETE ",  command = lambda : self.send_request('DELETE'))
         self.delete_button.place(relx = 0.22, y = 75+self.despy)
         self.delete_button.config(fg=self.ORANGE, bg= self.BACK_COLOR)
 
@@ -238,59 +180,31 @@ class UserInterface:
         self.content_entry.place(relx = 0.30, y = 110+self.despy)
 
 
-#----------------FUNCTIONS -------------------
-    def send_request_get(self):
-
+    #----------------methods -------------------
+    def send_request(self, method):
         self.url = self.url_bar.get("1.0",'end-1c')
 
-        self.response = SendRequest.get(self.url)
+        if method == 'GET':
+            self.response = SendRequest.get(self.url)
 
-        if self.response:
-            self.deploy_data(self.response)
-        else:
-            self.response_area.insert("1.0", "No se pudo establecer conexión con el servidor")    
+        elif method == 'POST':            
+            data = {'method':'POST','body':{'title': 'foo','body': 'bar','userId': 1},'headers': {"Content-type": "application/json; charset=UTF-8"}}      
+            jsondata = json.dumps(data)
+            self.response = SendRequest.post(self.url,jsondata)
 
+        elif method == 'UPDATE':
+            data = self.response_area.get("1.0", 'end-1c')
+            jsondata = json.dumps(data)
+            self.response = SendRequest.update(self.url, jsondata)
 
-    def send_request_post(self):
+        elif method == 'DELETE':
+            self.response = SendRequest.delete(self.url)
 
-        data = {'method':'POST','body':{'title': 'foo','body': 'bar','userId': 1},'headers': {"Content-type": "application/json; charset=UTF-8"}}
-      
-        jsondata = json.dumps(data)
-
-        self.url = self.url_bar.get("1.0", 'end-1c')
-
-        self.response = SendRequest.post(self.url,jsondata)
-        if self.response:
-            self.deploy_data(self.response)
-        else:
-            self.clear()
-            self.response_area.insert("1.0", "No se pudo establecer conexión con el servidor")
-
-
-    def send_request_delete(self):
-
-        self.url = self.url_bar.get("1.0", 'end-1c')
-
-        self.response = SendRequest.delete(self.url)
-
-        if self.response:
-            self.deploy_data(self.response)
-        else:
-            self.response_area.insert("1.0", "No se pudo establecer conexión con el servidor")
-
-
-    def send_request_update(self):
-
-        self.url = self.url_bar.get("1.0", 'end-1c')
-        data = self.response_area.get("1.0", 'end-1c')
-        jsondata = json.dumps(data)
-        self.response = SendRequest.update(self.url, jsondata)
         if self.response:
              self.deploy_data(self.response)
         else:
             self.response_area.insert("1.0", "No se pudo establecer conexión con el servidor")
 
-        
 
     def deploy_data(self, response):
 
@@ -308,7 +222,7 @@ class UserInterface:
 
 
     def save_to_file(self):
-        
+
         if self.response_area.get("1.0", 'end-1c') == '':
             self.error_dialog("No hay contenido para guradar.")
             return
