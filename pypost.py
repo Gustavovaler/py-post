@@ -1,12 +1,13 @@
 import os
 import json
+import datetime
 from tkinter import Tk, Button, Label, StringVar, IntVar, Entry, Text, Frame
 from tkinter import messagebox
 from tkinter import simpledialog as simpledialog
 from tkinter import filedialog
 import tkinter.font as fnt
 from tkinter.ttk import LabelFrame
-from utilities import parse_log, SendRequest
+from utilities import parse_log, SendRequest, save_reg_url
 
 
 class UserInterface:       
@@ -66,7 +67,7 @@ class UserInterface:
 
     #-- memory panel--------------------
 
-        self.frame_memory = LabelFrame(self.ventana, width = 250 , height = 220, text = "Recent requests" , labelanchor = 'n', relief = 'ridge')
+        self.frame_memory = LabelFrame(self.ventana, width = 250 , height = 220, text = "Recent requests" , labelanchor = 'nw', relief = 'ridge')
         self.frame_memory.place(x=780, y = 130+self.despy)
 
 
@@ -197,6 +198,7 @@ class UserInterface:
 
     #----------------methods -------------------
     def send_request(self, method):
+        
         self.url = self.url_bar.get("1.0",'end-1c')
 
         if method == 'GET':
@@ -216,8 +218,8 @@ class UserInterface:
             self.response = SendRequest.delete(self.url)
 
         if self.response:
-            new_reg_memory = {"method":method, "url":self.url}
-            self.save_reg_to_file(new_reg_memory)
+            self.new_reg_memory = {"method":method, "url":self.url, "time":str(datetime.datetime.now())}
+            save_reg_url(self.new_reg_memory)           
 
             if self.response == "err1":
                 self.error_dialog("Debe ingresar una url.")
@@ -258,7 +260,6 @@ class UserInterface:
                                             title = "Seleccione el nombre de archivo y su ubicación: ",
                                             filetype = my_filetypes)
         if answer:
-
             f = open(answer, "w")
             f.write(self.response_area.get("1.0", 'end-1c'))
             f.close()  

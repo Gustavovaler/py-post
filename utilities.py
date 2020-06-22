@@ -3,15 +3,23 @@ import requests as r
 from tkinter import messagebox
 
 def parse_log():
-    f = open("log.json", "r")
+    f = open("log.json", "rb+")
     log = json.loads(f.read())
     registros =[]
     for reg in log['urls']:
         registros.append(reg)
     f.close()
+    registros.reverse()
     return registros
 
 
+def save_reg_url(registro):
+    
+    regjson = json.dumps(registro)
+    f = open("log.json", "rb+")
+    f.seek(-2,2)
+    f.write(bytes(","+regjson+"]}", 'utf-8'))
+    f.close()
 
 class SendRequest:
     def __init__(self):
