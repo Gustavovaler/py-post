@@ -272,7 +272,7 @@ if __name__ == '__main__':
     cdir = os.getcwd()
     if not os.path.isfile(cdir+"/log.json"):
         f=open("log.json", "w")
-        f.write('{"urls":[]}')
+        f.write('{"urls":[{"method": "", "url": "", "time": "2020-06-21 22:59:47.832558"}]}')
         f.close()   
 
     app = UserInterface()
